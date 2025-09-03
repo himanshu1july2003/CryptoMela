@@ -5,22 +5,27 @@ import { DotFilledIcon } from '@radix-ui/react-icons';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"; // <-- Add this line
 import { DialogClose } from '@radix-ui/react-dialog';
+import { useDispatch } from 'react-redux';
+import { paymentHandler } from '@/State/Wallet/Action';
 
 const TopupForm = () => {
   const [amount, setAmount] = React.useState('');
   const [payment, setPayment] = React.useState("RAZORPAY");
-
+  const dispatch=useDispatch()
   const handleChange = (e) => {
     setAmount(e.target.value);
   };
 
   const handlePaymentMethod = (val) => {
+    
     setPayment(val);
   };
 
   const handleSubmit = () => {
-    console.log("Amount:", amount);
-    console.log("Payment Method:", payment);
+    console.log("Amount:", amount,);
+    console.log("Amount:", payment,);
+    
+    dispatch(paymentHandler({jwt:localStorage.getItem("jwt"),payment,amount}))
   };
 
   return (

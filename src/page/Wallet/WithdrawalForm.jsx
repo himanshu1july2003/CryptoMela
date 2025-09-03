@@ -1,17 +1,21 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { withdrawalRequest } from '@/State/WithDrawal/Action';
 import { Dialog, DialogClose } from '@radix-ui/react-dialog';
 import { Landmark } from 'lucide-react';
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 
 const WithdrawalForm = () => {
   const [amount, setAmount] = React.useState('');
+    const dispatch=useDispatch()
 
   const handleChange = (e) => {
     setAmount(e.target.value);
   };
  
   const handleSubmit = () => {
+    dispatch(withdrawalRequest(amount,localStorage.getItem("jwt")))
     console.log(amount)
   };
  

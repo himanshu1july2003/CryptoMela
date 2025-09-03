@@ -1,4 +1,4 @@
-import { de } from "zod/v4/locales/index.cjs";
+
 import {
     FETCH_COIN_LIST_REQUEST,
     FETCH_COIN_LIST_SUCCESS,
@@ -18,6 +18,7 @@ import {
     SEARCH_COIN_REQUEST,
     FETCH_TOP_50_COINS_REQUEST,
     FETCH_TOP_50_COINS_FAILURE,
+    RESET_COIN_DETAILS,
 } from "./ActionTypes";
 
 const initialState = {
@@ -84,6 +85,15 @@ const coinReducer = (state = initialState, action) => {
                 loading: false,
                 error: null,
             };
+
+case RESET_COIN_DETAILS:
+  return {
+    ...state,
+    coinDetails: null,
+    loading: false,   // 👈 yeh add kar
+    error: null
+  };
+
 
         case FETCH_MARKET_CHART_FAILURE:
             return {

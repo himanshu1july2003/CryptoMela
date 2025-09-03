@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,49 @@ import WithdrawalForm from './WithdrawalForm'
 import TopupForm from './TopupForm'
 import TransferFormm from './TransferFormm'
 import TransactionsHistory from './TransactionsHistory'
+import { useDispatch, useSelector } from 'react-redux'
+import { depositMoney, getUserWallet, getWalletTransactions } from '@/State/Wallet/Action'
+import { store } from '@/State/Store'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 const Wallet = () => {
+  const {wallet}=useSelector(store=>store)
+  const dispatch=useDispatch()
+  const query = useQuery();
+  console.log(query)
+  const orderId = query.get("order_id");
+  const paymentId = query.get("payment_id");
+  const razorpayPaymentId = query.get("razorpay_payment_id");
+const navigate=useNavigate()
+useEffect(() => {
+  if (orderId) {
+    dispatch(
+      depositMoney({
+        jwt: localStorage.getItem("jwt"),
+        orderId,
+        paymentId: razorpayPaymentId || paymentId,
+        navigate,
+      })
+    ).then(() => {
+      // ✅ Jab deposit success ho jaye tab transaction history reload
+      dispatch(getWalletTransactions({ jwt: localStorage.getItem("jwt") }));
+    });
+  }
+}, [orderId, paymentId, razorpayPaymentId]);
+
+
+
+useEffect(() => {
+  handleFetchUserWallet();
+}, []);
+
+const handleFetchUserWallet = () => {
+  dispatch(getUserWallet(localStorage.getItem("jwt")));
+};
+
   return (
     <div className='flex flex-col items-center'>
       <div className='pt-10 w-full lg:w-[60%]'>
@@ -35,19 +77,19 @@ const Wallet = () => {
                   <CardTitle className="text-2xl">My Wallet</CardTitle>
                   <div className='flex items-center gap-1'>
                     <p className='text-gray-200'>
-                      #A475Ed
+                      #{wallet.userWallet?.id}
                     </p>
                     <CopyIcon className='cursor-pointer hover:text-slate-200 h-3' />
                   </div>
                 </div>
               </div>
-              <ReloadIcon className='w-5 h-5 cursor-pointer hover:text-gray-400◘' />
+              <ReloadIcon onClick={handleFetchUserWallet} className='w-5 h-5 cursor-pointer hover:text-gray-400' />
             </div>
           </CardHeader>
           <CardContent>
             <div className='flex items-center'>
               <DollarSign />
-              <span className='text-2xl font-semibold'> 20000</span>
+              <span className='text-2xl font-semibold'> {wallet.userWallet?.balance}</span>
             </div>
             <div className='flex gap-7 mt-5'>
               <Dialog>

@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter, useParams } from 'react-router-dom';
 import Home from './page/Home/Home';
 import Auth from './page/Auth(signUp_Login)/Auth';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,10 @@ import Withdraw from './page/Withdraw/Withdraw';
 import NotFound from './page/NotFound/NotFound';
 import Navbar from './page/Navbar/Navbar';
 
+// const StockDetailsWrapper = () => {
+//   const { id } = useParams();
+//   return <StockDetails key={id} id={id} />; 
+// };
 function App() {
   const {auth}=useSelector(store=>store);
   const dispatch=useDispatch()
@@ -27,7 +31,8 @@ useEffect(() => {
     dispatch(getUser(token));
 
   }
-}, [auth.jwt, auth.user, dispatch]); // 👈 ab user bhi dependency me hai
+}, [auth.jwt, auth.user, dispatch]); 
+console.log("🌍 API_BASE_URL (from env):", import.meta.env);
 
 
   return (
@@ -45,6 +50,7 @@ useEffect(() => {
           <Navbar />  
           <Routes>
             <Route path='/' element={<Home />}></Route>
+             {/* <Route path='/market/:id' element={<StockDetailsWrapper />} /> */}
             <Route path='/Portfolio' element={<Portfolio />}></Route>
             <Route path='/Profile' element={<Profile />}></Route>
             <Route path='/Watchlist' element={<Watchlist />}></Route>

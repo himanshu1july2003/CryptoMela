@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -11,7 +11,16 @@ import {
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Button } from '@/components/ui/button'
 import { BookmarkFilledIcon } from '@radix-ui/react-icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllOrdersForUser } from '@/State/Order/Action'
+import { store } from '@/State/Store'
+import { calculateProfit } from '@/Utils/calculateProfit'
 const Activity = () => {
+  const {order}=useSelector(store=>store)
+  const dispatch=useDispatch()
+  useEffect(() => {
+    dispatch(getAllOrdersForUser(localStorage.getItem("jwt")))
+  },[])
   return (
    <div className='p-3 lg:p-10'>
       <Button variant="outline" className='p-10'> <p className='font-extrabold text-5xl'>Your Activities</p></Button>
@@ -27,19 +36,19 @@ const Activity = () => {
     </TableRow>
   </TableHeader>
   <TableBody>
-    {[1,1,1,1,1 ].map((item,index)=> <TableRow key={index}>
+    {order.orders.map((item,index)=> <TableRow key={index}>
         <TableCell>24/4/25</TableCell>
       <TableCell className=" font-medium flex gap-1  items-center">
         <Avatar className='-z-50'>
-            <AvatarImage className='h-8 w-8' src='https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1696501400'>
+            <AvatarImage className='h-8 w-8' src={item.orderItem.coin.image}>
             </AvatarImage>
         </Avatar>
-        <p>BTC</p>
+        <p>{item.orderItem.coin.symbol}</p>
        </TableCell>
-        <TableCell>24</TableCell>
-        <TableCell>111</TableCell>
+        <TableCell>{item.orderItem.coin.current_price}</TableCell>
+        <TableCell>{item.orderItem.coin.current_price}</TableCell>
         <TableCell>BUY</TableCell>
-        <TableCell> 10
+        <TableCell> {calculateProfit(item)}
         </TableCell>
     </TableRow>
     )}

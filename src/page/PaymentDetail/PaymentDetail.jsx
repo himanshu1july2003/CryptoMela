@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -10,33 +10,51 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button'
 import PaymentDetailForm from './PaymentDetailForm'
+import { useDispatch, useSelector } from 'react-redux'
+import { store } from '@/State/Store'
+import { getPaymentDetails } from '@/State/WithDrawal/Action'
 
 const PaymentDetail = () => {
+  const {withdrawal}=useSelector(store=>store)
+  console.log("------------>",withdrawal)
+  const dispatch=useDispatch()
+  useEffect(() => {
+    dispatch(getPaymentDetails({jwt:localStorage.getItem("jwt")}))
+  },[])
+ const accountNumber = withdrawal?.paymentDetails?.accountNumber || "";
+
+// Mask all but last 4 digits
+const maskedAccountNumber = accountNumber
+  ? "*".repeat(accountNumber.length - 4) + accountNumber.slice(-4)
+  : "";
+
+
   return (
     <div>
       <div className="px-20">
         <h1 className="text-3xl font-bold py-10">Payment Details</h1>
-        <Card>
+        {withdrawal.paymentDetails &&
+        (<Card>
           <CardHeader>
             <CardTitle>
-              Yes Bank
+              {withdrawal?.paymentDetails?.bankName}
             </CardTitle>
             <CardDescription>
               A/C No :
-              ************1651
+              {maskedAccountNumber}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
               <p className="w-32">A/C Holder </p>
-              <p className="text-gray-400"> :  with zosh</p>
+              <p className="text-gray-400"> : {withdrawal?.paymentDetails?.accountHolderName}</p>
             </div>
             <div className="flex items-center">
               <p className="w-32">IFSC</p>
-              <p className="text-gray-400">: YESB0000007</p>
+              <p className="text-gray-400">: {withdrawal?.paymentDetails?.ifsc}</p>
             </div>
           </CardContent>
-        </Card>
+        </Card>)}
         <Dialog>
           <DialogTrigger>
             <Button className="py-6 m-2">

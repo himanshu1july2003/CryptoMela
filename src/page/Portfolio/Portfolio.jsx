@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -9,7 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserAssets } from '@/State/Asset/Action'
+import { store } from '@/State/Store'
 const Portfolio = () => {
+  const dispatch=useDispatch()
+  const {asset}=useSelector(store=>store)
+  useEffect(() => {
+    console.log("--->",asset)
+    dispatch(getUserAssets(localStorage.getItem("jwt")))
+  },[dispatch])
   return (
     <div className='p-4 lg:p-20'>
       <h1 className='font-extrabold text-5xl'>Portfolio</h1>
@@ -20,27 +29,25 @@ const Portfolio = () => {
       <TableHead>SYMBOL</TableHead>
       <TableHead>High 24H</TableHead>
       <TableHead>Low 24H</TableHead>
-      <TableHead>MARKET CAP</TableHead>
-      <TableHead>PRICE</TableHead>
+      <TableHead>My Holdings</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
-    {[1,1,1,1,1 ].map((tem,index)=> <TableRow key={index}>
-      <TableCell className=" font-medium">
+  {(asset.userAssets || []).map((tem, index) => (
+    <TableRow key={index}>
+      <TableCell className="font-medium">
         <Avatar className='-z-50'>
-            <AvatarImage className='h-8 w-8' src='https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1696501400'>
-
-            </AvatarImage>
+          <AvatarImage className='h-8 w-8' src={tem.coin.image} />
         </Avatar>
-       </TableCell>
-        <TableCell className="flex "> BTC </TableCell>
-        <TableCell>24</TableCell>
-        <TableCell>20</TableCell>
-        <TableCell>111</TableCell>
-        <TableCell>$150</TableCell>
+      </TableCell>
+      <TableCell className="flex ">{tem.coin.symbol.toUpperCase()}</TableCell>
+      <TableCell>{tem.coin.high_24h}</TableCell>
+      <TableCell>{tem.coin.low_24h}</TableCell>
+      <TableCell className="bg-gray-500">${tem.quantity}</TableCell>
     </TableRow>
-    )}
-  </TableBody>
+  ))}
+</TableBody>
+
 </Table>
     </div>
   )
