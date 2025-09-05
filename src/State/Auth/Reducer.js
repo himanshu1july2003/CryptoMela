@@ -21,9 +21,12 @@ const authReducer = (state = initialState, action) => {
 
     case REGISTER_SUCCESS:
     case LOGIN_SUCCESS:
-      // ✅ JWT store karega
-      localStorage.setItem("jwt", action.payload);
-      return { ...state, loading: false, error: null, jwt: action.payload };
+  return {
+    ...state,
+    loading: false,
+    jwt: action.payload.jwt,   // ✅ string directly lo
+    user: action.payload.user, // ✅ user alag store karo
+  };
 
     case GET_USER_SUCCESS:
       return { ...state, loading: false, error: null, user: action.payload };
